@@ -89,6 +89,7 @@ A complete roadmap for learning C from fundamentals to systems, performance engi
 - Underflow
 - Integer promotion
 - Type conversion rules
+- const correctness (beyond pointers — general immutability discipline)
 
 ## Phase 7: Integer & Floating-Point Internals
 
@@ -146,6 +147,8 @@ A complete roadmap for learning C from fundamentals to systems, performance engi
 - Passing arrays to functions
 - Array decay
 - Character arrays
+- Dynamic 2D/3D allocation (array of pointers vs single contiguous block)
+- Row-major vs column-major memory layout (critical for BLAS/NumPy/CUDA interop)
 
 ## Phase 12: Strings
 
@@ -249,6 +252,7 @@ A complete roadmap for learning C from fundamentals to systems, performance engi
 - gcc / clang
 - Makefile, CMake
 - Meson, Ninja, Autotools, pkg-config
+- Package managers: vcpkg, Conan
 - Cross toolchains
 - Compiler warnings, optimization flags, debug symbols
 - Static analysis
@@ -281,6 +285,7 @@ A complete roadmap for learning C from fundamentals to systems, performance engi
 - perror()
 - assert()
 - Exit codes
+- setjmp() / longjmp() (non-local control flow)
 
 ## Phase 26: Advanced Memory Topics
 
@@ -375,7 +380,8 @@ A complete roadmap for learning C from fundamentals to systems, performance engi
 ## Phase 36: Linux System Programming
 
 - Processes, threads
-- fork, exec, wait, signals
+- fork, exec, wait
+- Signal handling: signal() vs sigaction(), signal handlers, signal-safety, blocking/masking signals
 - Daemons
 - Pipes, named pipes
 - Shared memory, semaphores, message queues
@@ -445,6 +451,7 @@ A complete roadmap for learning C from fundamentals to systems, performance engi
 
 - Log rotation, async logging, structured/binary logging
 - Unit testing, integration testing
+- Testing frameworks: Unity, CMocka, Check
 - Fuzz testing, property testing
 - Coverage, mocking
 
@@ -557,3 +564,23 @@ Study how C underpins the ML/AI software stack:
 - SQLite C API
 - zlib
 - libcurl
+
+## Phase 56: Capstone Projects
+
+Theory sticks when you build. Suggested projects, roughly ordered by difficulty:
+
+- Build your own `malloc`/`free` (custom heap allocator)
+- Build a dynamic array / vector library (generic, via `void*`)
+- Build a hash table from scratch
+- Build a JSON parser
+- Build a simple shell (fork/exec/pipes/signals)
+- Build a thread pool
+- Build a lock-free queue
+- Build a basic HTTP server (sockets + epoll)
+- Build a key-value store with file persistence
+- Build a matrix multiplication library and benchmark it against BLAS/OpenBLAS
+- Build a small autograd engine in C (ties directly into ML — mirrors the spirit of Karpathy's llm.c)
+- Build a memory profiler / leak detector
+- Build a mini regex engine
+- Build a simple ELF binary parser
+- Port one small utility from Python/Rust to C via FFI and benchmark the difference
