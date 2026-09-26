@@ -1,0 +1,358 @@
+# C Programming — Fundamentals
+
+A beginner-friendly guide covering the history of C, how compilation works, the tools you'll use, and how to write your first program.
+
+## Table of Contents
+
+- [History of C](#history-of-c)
+- [Compiler vs Interpreter](#compiler-vs-interpreter)
+- [GCC/Clang](#gccclang)
+- [Compilation Process](#compilation-process)
+- [Executable](#executable)
+- [IDE vs Text Editor](#ide-vs-text-editor)
+- [Writing Your First Program](#writing-your-first-program)
+- [Header Files](#header-files)
+- [Comments](#comments)
+
+---
+
+## History of C
+
+C is one of the most influential programming languages ever created, forming the foundation for many modern languages like C++, Java, Python, and JavaScript (in spirit and syntax).
+
+| Year | Milestone |
+|------|-----------|
+| 1969–1973 | Developed by **Dennis Ritchie** at **Bell Labs** |
+| 1972 | First stable version released |
+| 1978 | *The C Programming Language* book published by Ritchie & Brian Kernighan (often called **K&R C**) |
+| 1989 | Standardized as **ANSI C** (C89/C90) |
+| 1999 | **C99** standard — added `//` comments, `inline`, variable-length arrays |
+| 2011 | **C11** standard — added multithreading support, anonymous structs |
+| 2018 | **C17** — bug-fix revision of C11 |
+| 2023/2024 | **C23** — modern additions (e.g., `bool` as a keyword, `nullptr`) |
+
+**Why C matters:**
+- Originally created to rewrite the **UNIX operating system**
+- It's a **low-level, procedural** language — gives you close control over memory and hardware
+- Nearly every modern OS kernel (Linux, Windows, macOS) has C at its core
+- Learning C helps you understand *how* computers actually work under the hood
+
+---
+
+## Compiler vs Interpreter
+
+Both are ways to turn human-readable source code into something a computer can execute — but they work very differently.
+
+| Aspect | Compiler | Interpreter |
+|--------|----------|--------------|
+| **How it works** | Translates the **entire** source code into machine code **before** execution | Reads and executes code **line-by-line**, on the fly |
+| **Output** | Produces a standalone executable file | No separate executable; needs the interpreter every time |
+| **Speed** | Faster at runtime (already translated) | Slower at runtime (translates as it runs) |
+| **Error detection** | Catches errors during compilation, before running | Catches errors only when that line is reached |
+| **Examples** | C, C++, Rust, Go | Python, JavaScript, Ruby |
+
+**C is a compiled language.** This means:
+1. You write your code.
+2. A compiler translates it into machine code.
+3. You get an `.exe` (Windows) or binary (Linux/macOS) file.
+4. You run *that* file — the compiler isn't needed anymore.
+
+> 💡 **Analogy:** A compiler is like translating an entire book into another language before handing it to the reader. An interpreter is like a live translator speaking sentence-by-sentence as someone talks.
+
+---
+
+## GCC/Clang
+
+To compile C code, you need a **compiler toolchain**. The two most popular ones are:
+
+### GCC (GNU Compiler Collection)
+- Free, open-source, developed by the GNU Project
+- The most widely used C compiler, especially on Linux
+- Supports many languages (C, C++, Fortran, etc.), not just C
+- Command: `gcc`
+
+### Clang
+- Built on the **LLVM** compiler infrastructure
+- Developed largely by Apple (used as default on macOS)
+- Known for **faster compilation** and **clearer error messages** than GCC
+- Command: `clang`
+
+### Installing
+
+**Linux (Debian/Ubuntu):**
+```bash
+sudo apt update
+sudo apt install gcc
+```
+
+**macOS:**
+```bash
+xcode-select --install
+```
+
+**Windows:**
+- Install [MinGW](https://www.mingw-w64.org/) or use [WSL](https://learn.microsoft.com/en-us/windows/wsl/) to get a Linux-style GCC setup.
+
+### Checking installation
+```bash
+gcc --version
+clang --version
+```
+
+---
+
+## Compilation Process
+
+Turning `.c` source code into a runnable program happens in **four stages**:
+
+```
+Source Code (.c) → Preprocessing → Compilation → Assembly → Linking → Executable
+```
+
+### 1. Preprocessing
+- Handles lines starting with `#` (called **preprocessor directives**)
+- Expands `#include`, `#define`, resolves `#ifdef` conditions
+- Removes comments
+- Output: expanded source code (a `.i` file)
+
+```bash
+gcc -E program.c -o program.i
+```
+
+### 2. Compilation
+- Converts the preprocessed code into **assembly language**
+- Checks syntax and semantics — this is where most errors are caught
+- Output: a `.s` file
+
+```bash
+gcc -S program.i -o program.s
+```
+
+### 3. Assembly
+- The assembler converts assembly code into **machine code** (binary)
+- Output: an **object file** (`.o` or `.obj`) — not yet runnable
+
+```bash
+gcc -c program.s -o program.o
+```
+
+### 4. Linking
+- Combines your object file with **library code** (e.g., the C standard library for functions like `printf`)
+- Resolves references to external functions/variables
+- Output: the final **executable**
+
+```bash
+gcc program.o -o program
+```
+
+### The easy way
+
+In practice, you don't run these four steps manually — a single command does it all:
+
+```bash
+gcc program.c -o program
+```
+
+---
+
+## Executable
+
+An **executable** is the final compiled file that your operating system can run directly.
+
+- **Linux/macOS:** no extension needed (e.g., `./program`)
+- **Windows:** ends in `.exe` (e.g., `program.exe`)
+
+### Running it
+
+```bash
+gcc program.c -o program   # compile
+./program                  # run (Linux/macOS)
+program.exe                 # run (Windows)
+```
+
+Key points:
+- The executable contains **machine code** — pure binary instructions specific to your CPU architecture (e.g., x86, ARM)
+- It runs **without** needing the compiler or original source code
+- It is **not portable** across different operating systems/architectures without recompiling
+
+---
+
+## IDE vs Text Editor
+
+| Aspect | IDE (Integrated Development Environment) | Text Editor |
+|--------|--------------------------------------------|--------------|
+| **Definition** | A full software suite: editor + compiler/debugger + build tools, all integrated | A lightweight program just for editing text/code |
+| **Examples** | Code::Blocks, CLion, Visual Studio, Eclipse | VS Code (lightweight mode), Sublime Text, Vim, Nano |
+| **Setup** | Heavier, more setup, more disk space | Lightweight, quick to open |
+| **Features** | Built-in debugger, autocomplete, project management, one-click run | Syntax highlighting, extensions (varies) |
+| **Best for** | Larger projects, debugging-heavy workflows | Quick edits, learning the command line, minimalism |
+
+> Note: **VS Code** blurs the line — it's technically a text editor, but with extensions (like the C/C++ extension) it behaves like a lightweight IDE. This is a very popular choice for learning C.
+
+**Recommendation for beginners:** Use a simple text editor (like VS Code) alongside the terminal. This forces you to understand the actual compilation commands rather than relying on a "Run" button — which builds a much stronger foundation.
+
+---
+
+## Writing Your First Program
+
+Create a file called `hello.c`:
+
+```c
+#include <stdio.h>
+
+int main(void) {
+    printf("Hello, World!\n");
+    return 0;
+}
+```
+
+### Breaking it down
+
+| Line | Explanation |
+|------|-------------|
+| `#include <stdio.h>` | Imports the **Standard Input/Output** library, giving access to `printf()` |
+| `int main(void)` | The **entry point** of every C program — execution always starts here |
+| `{ ... }` | Curly braces define the body/scope of the function |
+| `printf("Hello, World!\n");` | Prints text to the console; `\n` creates a new line |
+| `return 0;` | Ends `main`, returning `0` to the OS to signal **successful execution** |
+
+### Compile and run
+
+```bash
+gcc hello.c -o hello
+./hello
+```
+
+**Output:**
+```
+Hello, World!
+```
+
+---
+
+## Header Files
+
+Header files (`.h`) contain **declarations** — function prototypes, macros, and type definitions — that are shared across files via `#include`.
+
+### Two types of includes
+
+```c
+#include <stdio.h>   // Angle brackets: system/standard library headers
+#include "myheader.h" // Quotes: your own custom header files (local to project)
+```
+
+| Syntax | Where it looks |
+|--------|----------------|
+| `<header.h>` | Compiler's standard system directories |
+| `"header.h"` | Current directory first, then system directories |
+
+### Common standard headers
+
+| Header | Purpose |
+|--------|---------|
+| `stdio.h` | Input/output functions (`printf`, `scanf`) |
+| `stdlib.h` | Memory allocation, conversions, `exit()` |
+| `string.h` | String manipulation (`strlen`, `strcpy`) |
+| `math.h` | Mathematical functions (`sqrt`, `pow`) |
+| `time.h` | Date and time functions |
+
+### Creating your own header file
+
+**`math_utils.h`:**
+```c
+#ifndef MATH_UTILS_H
+#define MATH_UTILS_H
+
+int add(int a, int b);
+int subtract(int a, int b);
+
+#endif
+```
+
+**`math_utils.c`:**
+```c
+#include "math_utils.h"
+
+int add(int a, int b) {
+    return a + b;
+}
+
+int subtract(int a, int b) {
+    return a - b;
+}
+```
+
+**`main.c`:**
+```c
+#include <stdio.h>
+#include "math_utils.h"
+
+int main(void) {
+    printf("%d\n", add(3, 4));
+    return 0;
+}
+```
+
+**Compiling multiple files:**
+```bash
+gcc main.c math_utils.c -o program
+```
+
+> 💡 The `#ifndef` / `#define` / `#endif` pattern is called an **include guard** — it prevents a header from being included multiple times in the same file, which would cause duplicate-definition errors.
+
+---
+
+## Comments
+
+Comments are ignored by the compiler — they're notes for humans reading the code.
+
+### Single-line comments (`//`)
+Introduced in C99. Everything after `//` on that line is ignored.
+
+```c
+// This calculates the sum of two numbers
+int sum = a + b;
+```
+
+### Multi-line comments (`/* ... */`)
+Can span multiple lines. Cannot be nested.
+
+```c
+/*
+ * This function takes two integers
+ * and returns their sum.
+ */
+int add(int a, int b) {
+    return a + b;
+}
+```
+
+### Best practices
+- Explain **why**, not just **what** (the code already shows *what*)
+- Keep comments up to date — outdated comments are worse than none
+- Use comments to document function purpose, parameters, and edge cases
+- Avoid over-commenting obvious code:
+
+```c
+int x = 5; // sets x to 5 (unnecessary — it's obvious)
+int retryCount = 5; // number of retries before giving up (adds context)
+```
+
+---
+
+## Quick Reference: Full Build Command
+
+```bash
+gcc -Wall -Wextra -std=c11 program.c -o program
+```
+
+| Flag | Meaning |
+|------|---------|
+| `-Wall` | Enable common warnings |
+| `-Wextra` | Enable extra warnings |
+| `-std=c11` | Use the C11 standard |
+| `-o program` | Name the output executable `program` |
+
+---
+
+*Happy coding!*
