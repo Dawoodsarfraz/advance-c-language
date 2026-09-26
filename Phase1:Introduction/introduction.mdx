@@ -57,7 +57,7 @@ Both are ways to turn human-readable source code into something a computer can e
 3. You get an `.exe` (Windows) or binary (Linux/macOS) file.
 4. You run *that* file — the compiler isn't needed anymore.
 
-> 💡 **Analogy:** A compiler is like translating an entire book into another language before handing it to the reader. An interpreter is like a live translator speaking sentence-by-sentence as someone talks.
+>  **Analogy:** A compiler is like translating an entire book into another language before handing it to the reader. An interpreter is like a live translator speaking sentence-by-sentence as someone talks.
 
 ---
 
@@ -98,6 +98,105 @@ xcode-select --install
 gcc --version
 clang --version
 ```
+
+### Checking g++ version
+
+`g++` is GCC's C++ compiler front-end, installed alongside `gcc`. Check it the same way:
+
+```bash
+g++ --version
+```
+
+### Seeing what versions are available
+
+Sometimes multiple versions of GCC exist on a system (e.g., `gcc-11`, `gcc-12`, `gcc-13`). To list every installed version:
+
+**Linux (Debian/Ubuntu):**
+```bash
+ls /usr/bin/gcc-*
+ls /usr/bin/g++-*
+```
+
+Or use `update-alternatives`, which manages which version `gcc` points to:
+```bash
+update-alternatives --list gcc
+```
+
+**macOS (via Homebrew):**
+```bash
+brew list --versions gcc
+```
+
+**Check which GCC is currently active as default:**
+```bash
+which gcc
+readlink -f $(which gcc)
+```
+
+### Installing a newer version **without removing** the current default
+
+You can install additional GCC versions side-by-side — the original stays untouched and callable.
+
+**Linux (Debian/Ubuntu):**
+```bash
+sudo apt update
+sudo apt install gcc-13 g++-13
+```
+
+This does **not** overwrite `gcc-11` or whatever your current default is — it installs `gcc-13` as a separate, additional binary. Your `gcc` command still points to the old default until you explicitly change it.
+
+**Switching the default (optional) using `update-alternatives`:**
+```bash
+sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 110
+sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 130
+sudo update-alternatives --config gcc
+```
+This gives you an interactive menu to pick which version `gcc` points to — you can switch back and forth anytime without reinstalling anything.
+
+**macOS (via Homebrew):**
+```bash
+brew install gcc@13
+```
+Homebrew keeps versions side-by-side too (e.g., `gcc-13`, while `gcc` may still refer to Apple's Clang wrapper).
+
+>  **Key idea:** Installing a new version does not remove or upgrade the old one automatically — package managers like `apt` and `brew` install versioned binaries (`gcc-11`, `gcc-13`, etc.) side-by-side. You choose which one `gcc` points to.
+
+### Compiling with a specific compiler version
+
+Instead of switching the system default, you can just call the versioned binary directly:
+
+```bash
+gcc-13 program.c -o program
+g++-13 program.cpp -o program
+```
+
+This compiles using GCC 13 specifically, regardless of what `gcc` (unversioned) currently points to.
+
+### Compiling with a specific C standard (`-std=`)
+
+The `-std=` flag tells the compiler which **language standard** to follow — independent of which compiler *version* you're using (though newer standards need a reasonably recent compiler version to be supported).
+
+```bash
+gcc -std=c89 program.c -o program   # ANSI C (1989)
+gcc -std=c99 program.c -o program   # C99
+gcc -std=c11 program.c -o program   # C11
+gcc -std=c17 program.c -o program   # C17
+gcc -std=c23 program.c -o program   # C23 (requires GCC 13+ / Clang 17+ for full support)
+```
+
+Add `-Wall -Wextra` to also catch warnings for that standard:
+
+```bash
+gcc -std=c23 -Wall -Wextra program.c -o program
+```
+
+**Combining a specific compiler version with a specific standard:**
+```bash
+gcc-13 -std=c23 program.c -o program
+```
+This explicitly uses GCC 13 to compile with the C23 standard — useful when your system default (`gcc`) is an older version that doesn't yet support `c23`.
+
+>  If you request a standard your installed compiler version doesn't support (e.g., `-std=c23` on GCC 10), you'll get an error like `error: unrecognized command-line option '-std=c23'` — that's your signal to either install a newer version or check `gcc --version` first.
 
 ---
 
@@ -298,7 +397,7 @@ int main(void) {
 gcc main.c math_utils.c -o program
 ```
 
-> 💡 The `#ifndef` / `#define` / `#endif` pattern is called an **include guard** — it prevents a header from being included multiple times in the same file, which would cause duplicate-definition errors.
+>  The `#ifndef` / `#define` / `#endif` pattern is called an **include guard** — it prevents a header from being included multiple times in the same file, which would cause duplicate-definition errors.
 
 ---
 
@@ -334,8 +433,8 @@ int add(int a, int b) {
 - Avoid over-commenting obvious code:
 
 ```c
-int x = 5; // sets x to 5 (unnecessary — it's obvious)
-int retryCount = 5; // number of retries before giving up (adds context)
+int x = 5; //  sets x to 5 (unnecessary — it's obvious)
+int retryCount = 5; //  number of retries before giving up (adds context)
 ```
 
 ---
@@ -355,4 +454,4 @@ gcc -Wall -Wextra -std=c11 program.c -o program
 
 ---
 
-*Happy coding!*
+*Happy coding! *
